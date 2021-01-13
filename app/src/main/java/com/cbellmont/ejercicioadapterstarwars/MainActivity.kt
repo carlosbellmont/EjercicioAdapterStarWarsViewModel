@@ -25,6 +25,21 @@ class MainActivity : AppCompatActivity() {
         model = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         createRecyclerView()
         downloadAll()
+
+        binding.bAntiguas.setOnClickListener {
+            binding.pbLoading.visibility = View.VISIBLE
+            downloadOldFilm()
+        }
+
+        binding.bNuevas.setOnClickListener {
+            binding.pbLoading.visibility = View.VISIBLE
+            downloadNewFilm()
+        }
+
+        binding.bTodas.setOnClickListener {
+            binding.pbLoading.visibility = View.VISIBLE
+            downloadAll()
+        }
     }
 
     private fun createRecyclerView() {
@@ -32,15 +47,40 @@ class MainActivity : AppCompatActivity() {
         binding.filmRecyclerView.adapter = adapter
     }
 
+    private fun downloadOldFilm(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = loadFilmOldInBackground()
+            setAdapterOnMainThread(list)
+        }
+    }
+    private suspend fun loadFilmOldInBackground() : MutableList<Film>{
+        // El withContext(Dispatchers.IO) no es estrictamente necesario. Lo ponemos solo por seguridad.
+        return withContext(Dispatchers.IO) {
+            return@withContext model.getOldFilms()
+        }
+    }
+
+    private fun downloadNewFilm(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = loadFilmNewInBackground()
+            setAdapterOnMainThread(list)
+        }
+    }
+    private suspend fun loadFilmNewInBackground() : MutableList<Film>{
+        // El withContext(Dispatchers.IO) no es estrictamente necesario. Lo ponemos solo por seguridad.
+        return withContext(Dispatchers.IO) {
+            return@withContext model.getNewFilms()
+        }
+    }
 
     private fun downloadAll(){
         CoroutineScope(Dispatchers.IO).launch {
-            val list = loadFilmInBackground()
+            val list = loadFilmAllInBackground()
             setAdapterOnMainThread(list)
         }
     }
 
-    private suspend fun loadFilmInBackground() : MutableList<Film>{
+    private suspend fun loadFilmAllInBackground() : MutableList<Film>{
         // El withContext(Dispatchers.IO) no es estrictamente necesario. Lo ponemos solo por seguridad.
         return withContext(Dispatchers.IO) {
             return@withContext model.getFilms()
