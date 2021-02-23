@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cbellmont.ejercicioadapterstarwars.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadOldFilm(){
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             val list = loadFilmOldInBackground()
             setAdapterOnMainThread(list)
         }
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadNewFilm(){
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             val list = loadFilmNewInBackground()
             setAdapterOnMainThread(list)
         }
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadAll(){
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch {
             val list = loadFilmAllInBackground()
             setAdapterOnMainThread(list)
         }
